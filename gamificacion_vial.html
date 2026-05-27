@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gamificación Vial — República Dominicana</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rd-red: #002D62;
+    --rd-blue: #002D62;
+    --rd-green: #006B3F;
+    --accent: #E8C840;
+    --accent2: #F25C37;
+    --accent3: #1AA05B;
+    --bg: #F5F7FA;
+    --card-bg: #fff;
+    --text: #1a1a2e;
+    --muted: #5e6478;
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ====== SLIDES ====== */
+  .slide {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+    animation: fadeSlide 0.5s ease forwards;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ====== NAV ====== */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    background: #fff;
+    border-bottom: 3px solid var(--accent);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  .nav-logo {
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    color: var(--rd-blue);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .nav-logo .flag { font-size: 20px; }
+  .slide-counter {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #dde3f0;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    border: none;
+  }
+  .dot.active { background: var(--accent2); transform: scale(1.3); }
+  .dot:hover { background: #aab0c8; }
+
+  /* ====== HERO SLIDE ====== */
+  #slide-0 {
+    background: linear-gradient(145deg, #002D62 0%, #003d80 50%, #005f9e 100%);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  #slide-0::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='2' fill='rgba(255,255,255,0.06)'/%3E%3C/svg%3E") repeat;
+    pointer-events: none;
+  }
+  .road-strip {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .road-lines {
+    display: flex;
+    gap: 0;
+    animation: roadMove 3s linear infinite;
+    white-space: nowrap;
+  }
+  .road-line {
+    width: 80px; height: 8px;
+    background: var(--accent);
+    margin: 0 30px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  @keyframes roadMove {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-220px); }
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(232,200,64,0.2);
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(48px, 8vw, 90px);
+    color: #fff;
+    line-height: 1.0;
+    margin-bottom: 12px;
+  }
+  .hero-title span { color: var(--accent); }
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.8);
+    max-width: 520px;
+    margin: 0 auto 36px;
+    line-height: 1.6;
+    font-weight: 600;
+  }
+  .hero-author {
+    font-size: 14px;
+    color: rgba(255,255,255,0.5);
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hero-characters {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 32px 0 80px;
+    flex-wrap: wrap;
+  }
+  .character-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 16px 20px;
+    text-align: center;
+    width: 110px;
+    transition: transform 0.3s;
+  }
+  .character-card:hover { transform: translateY(-6px); }
+  .character-card .char-emoji { font-size: 36px; margin-bottom: 6px; display: block; }
+  .character-card .char-name { font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 700; }
+
+  /* ====== CONTENT SLIDES ====== */
+  .slide-inner {
+    padding: 48px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    flex: 1;
+  }
+  .section-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 50px;
+    margin-bottom: 14px;
+    background: #e8f1ff;
+    color: var(--rd-blue);
+  }
+  .slide-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(32px, 5vw, 52px);
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .slide-title span { color: var(--accent2); }
+  .slide-desc {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 36px;
+    font-weight: 600;
+  }
+
+  /* ====== CARDS GRID ====== */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 12px;
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    border: 2px solid #e8ecf6;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    border-radius: 4px 4px 0 0;
+  }
+  .feature-card.c1::before { background: var(--accent2); }
+  .feature-card.c2::before { background: var(--accent3); }
+  .feature-card.c3::before { background: #7B5CF0; }
+  .feature-card.c4::before { background: var(--accent); }
+  .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+    border-color: transparent;
+  }
+  .card-icon {
+    font-size: 40px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 600;
+  }
+
+  /* ====== CHARACTERS SLIDE ====== */
+  .chars-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 24px;
+  }
+  .char-big {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 2px solid #e8ecf6;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .char-big:hover {
+    transform: translateY(-8px) rotate(-1deg);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+  }
+  .char-big .big-emoji { font-size: 72px; display: block; margin-bottom: 12px; }
+  .char-big .char-big-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+  .char-big .char-role {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .char-big .char-tag {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ====== LEVELS SLIDE ====== */
+  .levels-list { display: flex; flex-direction: column; gap: 16px; }
+  .level-item {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 2px solid #e8ecf6;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: default;
+  }
+  .level-item:hover {
+    transform: translateX(6px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+  .level-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 36px;
+    min-width: 56px;
+    text-align: center;
+    line-height: 1;
+  }
+  .level-info { flex: 1; }
+  .level-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .level-desc { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .level-stars { font-size: 20px; white-space: nowrap; }
+
+  /* ====== MAP SLIDE ====== */
+  .regions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .region-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 22px 20px;
+    border: 2px solid #e8ecf6;
+    transition: all 0.3s;
+    cursor: pointer;
+    text-align: center;
+  }
+  .region-card:hover {
+    border-color: var(--accent2);
+    background: #fff8f6;
+    transform: scale(1.03);
+  }
+  .region-emoji { font-size: 38px; display: block; margin-bottom: 10px; }
+  .region-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+  .region-desc { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  /* ====== MECHANICS SLIDE ====== */
+  .mech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 600px) { .mech-grid { grid-template-columns: 1fr; } }
+  .mech-card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    border: 2px solid #e8ecf6;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mech-card .big-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 64px;
+    line-height: 1;
+    opacity: 0.08;
+    position: absolute;
+    top: 8px; right: 16px;
+    color: var(--text);
+  }
+  .mech-card h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .mech-card p { font-size: 14px; color: var(--muted); font-weight: 600; line-height: 1.6; }
+  .mech-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+
+  /* ====== CTA SLIDE ====== */
+  #slide-5 {
+    background: linear-gradient(145deg, #006B3F 0%, #008f54 60%, #00b368 100%);
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-emoji { font-size: 80px; margin-bottom: 16px; display: block; animation: bounce 2s infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-14px); }
+  }
+  .cta-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(36px, 7vw, 72px);
+    color: #fff;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .cta-sub {
+    font-size: 18px;
+    color: rgba(255,255,255,0.85);
+    max-width: 480px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+    font-weight: 700;
+  }
+  .cta-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .stat-box {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    padding: 16px 24px;
+    min-width: 120px;
+  }
+  .stat-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 36px;
+    color: #fff;
+    display: block;
+  }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .author-credits {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  /* ====== BUTTONS ====== */
+  .btn-next, .btn-prev {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-next {
+    background: var(--accent2);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(242,92,55,0.4);
+  }
+  .btn-next:hover { transform: scale(1.05); box-shadow: 0 10px 28px rgba(242,92,55,0.5); }
+  .btn-prev {
+    background: #fff;
+    color: var(--text);
+    border: 2px solid #e0e6f0;
+  }
+  .btn-prev:hover { background: #f4f6fc; transform: scale(1.03); }
+  .slide-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 0 40px 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .slide-actions.centered { justify-content: center; }
+
+  /* Progress bar */
+  .progress-bar-wrap {
+    height: 4px;
+    background: #e0e6f0;
+    position: sticky;
+    top: 69px;
+    z-index: 99;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), #ffa040);
+    transition: width 0.4s ease;
+    border-radius: 2px;
+  }
+
+  /* Horizontal rule accent */
+  .hr-accent {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent), transparent);
+    border-radius: 2px;
+    margin: 24px 0 32px;
+    max-width: 200px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .slide-inner { padding: 28px 20px; }
+    .slide-actions { padding: 0 20px 28px; }
+    .nav-bar { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <div class="nav-logo">
+    <span class="flag">🇩🇴</span>
+    Gamificación Vial
+  </div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <div class="slide-counter" id="slide-counter">01 / 06</div>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progress-fill" style="width:16.66%"></div>
+</div>
+
+<!-- ========= SLIDE 0 — PORTADA ========= -->
+<section class="slide active" id="slide-0">
+  <div class="hero-badge">📋 Presentación del Proyecto</div>
+  <h1 class="hero-title">Carreteando<br><span>¡Ando!</span></h1>
+  <p class="hero-subtitle">Aprender a manejar, conocer las leyes y divertirse mientras exploras.</p>
+  <div class="hero-characters">
+    <div class="character-card">
+      <span class="char-emoji">👮</span>
+      <div class="char-name">El Amet</div>
+    </div>
+    <div class="character-card">
+      <span class="char-emoji">🧒</span>
+      <div class="char-name">Juan</div>
+    </div>
+    <div class="character-card">
+      <span class="char-emoji">👧</span>
+      <div class="char-name">María</div>
+    </div>
+    <div class="character-card">
+      <span class="char-emoji">👩‍🦱</span>
+      <div class="char-name">Petronila</div>
+    </div>
+  </div>
+  <p class="hero-author">Proyecto de: Michell Benzant Lorenzo</p>
+  <div class="road-strip">
+    <div class="road-lines" id="road-lines"></div>
+  </div>
+</section>
+
+<!-- ========= SLIDE 1 — ¿QUÉ ES? ========= -->
+<section class="slide" id="slide-1">
+  <div class="slide-inner">
+    <span class="section-label">🎯 El Concepto</span>
+    <h2 class="slide-title">¿Qué es la <span>Carreteando Ando</span>?</h2>
+    <hr class="hr-accent">
+    <p class="slide-desc">Un videojuego educativo que convierte  el aprender las normas de tránsito en una aventura interactiva por todo el territorio dominicano.</p>
+    <div class="cards-grid">
+      <div class="feature-card c1">
+        <span class="card-icon">🎮</span>
+        <div class="card-title">Juego + Educación</div>
+        <p class="card-desc">Aprende las leyes de tránsito mientras juegas misiones reales en carreteras dominicanas.</p>
+      </div>
+      <div class="feature-card c2">
+        <span class="card-icon">🗺️</span>
+        <div class="card-title">Explora ciudades</div>
+        <p class="card-desc">Recorre provincias, carreteras y autopistas icónicas del territorio en el mapa interactivo.</p>
+      </div>
+      <div class="feature-card c3">
+        <span class="card-icon">🏆</span>
+        <div class="card-title">Gana Puntos</div>
+        <p class="card-desc">Completa misiones, respeta las señales y desbloquea nuevas rutas y personajes.</p>
+      </div>
+      <div class="feature-card c4">
+        <span class="card-icon">👨‍👩‍👧</span>
+        <div class="card-title">Para Toda Edad</div>
+        <p class="card-desc">Jóvenes, adultos y conductores nuevos aprenden juntos de forma divertida.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-actions">
+    <button class="btn-prev" onclick="changeSlide(-1)">← Atrás</button>
+    <button class="btn-next" onclick="changeSlide(1)">Siguiente →</button>
+  </div>
+</section>
+
+<!-- ========= SLIDE 2 — PERSONAJES ========= -->
+<section class="slide" id="slide-2">
+  <div class="slide-inner">
+    <span class="section-label">🧑‍🤝‍🧑 Los Personajes</span>
+    <h2 class="slide-title">¡Elige tu <span>Personaje!</span></h2>
+    <hr class="hr-accent">
+    <p class="slide-desc">Cada personaje tiene una historia única y habilidades especiales para el camino.</p>
+    <div class="chars-grid">
+      <div class="char-big">
+        <span class="big-emoji">👮</span>
+        <div class="char-big-name">El Amet</div>
+        <div class="char-role">Guía oficial de tránsito. Conoce todas las leyes al dedillo.</div>
+        <span class="char-tag" style="background:#e8f1ff;color:#003d80;">El Experto</span>
+      </div>
+      <div class="char-big">
+        <span class="big-emoji">🧒</span>
+        <div class="char-big-name">Juan</div>
+        <div class="char-role">Curioso y rápido. Aprende todo sobre la RD en cada misión.</div>
+        <span class="char-tag" style="background:#e8fff4;color:#006B3F;">Principiante</span>
+      </div>
+      <div class="char-big">
+        <span class="big-emoji">👧</span>
+        <div class="char-big-name">Maria</div>
+        <div class="char-role">Inteligente y prudente. Siempre respeta las señales.</div>
+        <span class="char-tag" style="background:#fff0fb;color:#8b2083;">Intermedia</span>
+      </div>
+      <div class="char-big">
+        <span class="big-emoji">👩‍🦱</span>
+        <div class="char-big-name">Petronila</div>
+        <div class="char-role">Experimentada conductora. Comparte su sabiduría vial.</div>
+        <span class="char-tag" style="background:#fff7e0;color:#7a5500;">Avanzada</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-actions">
+    <button class="btn-prev" onclick="changeSlide(-1)">← Atrás</button>
+    <button class="btn-next" onclick="changeSlide(1)">Siguiente →</button>
+  </div>
+</section>
+
+<!-- ========= SLIDE 3 — NIVELES ========= -->
+<section class="slide" id="slide-3">
+  <div class="slide-inner">
+    <span class="section-label">📈 Progresión</span>
+    <h2 class="slide-title">Los <span>Niveles</span> del Juego</h2>
+    <hr class="hr-accent">
+    <p class="slide-desc">Desde las calles del Distrito hasta las autopistas del Cibao — cada nivel te reta más.</p>
+    <div class="levels-list">
+      <div class="level-item">
+        <div class="level-num" style="color:#4BB543;">1</div>
+        <div class="level-info">
+          <div class="level-name">Ciudad Universitaria</div>
+          <div class="level-desc">Aprende las señales básicas, semáforos y normas peatonales en zonas con trafico peatonal.</div>
+        </div>
+        <div class="level-stars">⭐</div>
+      </div>
+      <div class="level-item">
+        <div class="level-num" style="color:#E8C840;">2</div>
+        <div class="level-info">
+          <div class="level-name">Ciudad Capital</div>
+          <div class="level-desc">Navega el tráfico denso de Santo Domingo: rotondas, buses y peatones.</div>
+        </div>
+        <div class="level-stars">⭐⭐</div>
+      </div>
+      <div class="level-item">
+        <div class="level-num" style="color:#F25C37;">3</div>
+        <div class="level-info">
+          <div class="level-name">Autopistas RD</div>
+          <div class="level-desc">Maneja a alta velocidad respetando límites, peajes y zonas de descanso.</div>
+        </div>
+        <div class="level-stars">⭐⭐⭐</div>
+      </div>
+      <div class="level-item">
+        <div class="level-num" style="color:#7B5CF0;">4</div>
+        <div class="level-info">
+          <div class="level-name">Maestro Vial</div>
+          <div class="level-desc">Desafíos extremos: lluvia, noche, carreteras de montaña. ¡Demuestra que eres un experto!</div>
+        </div>
+        <div class="level-stars">⭐⭐⭐⭐⭐</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-actions">
+    <button class="btn-prev" onclick="changeSlide(-1)">← Atrás</button>
+    <button class="btn-next" onclick="changeSlide(1)">Siguiente →</button>
+  </div>
+</section>
+
+<!-- ========= SLIDE 4 — MECÁNICAS ========= -->
+<section class="slide" id="slide-4">
+  <div class="slide-inner">
+    <span class="section-label">⚙️ Cómo Funciona</span>
+    <h2 class="slide-title">Mecánicas <span>del Juego</span></h2>
+    <hr class="hr-accent">
+    <p class="slide-desc">Aprende conduciendo — cada decisión tiene consecuencias reales dentro del juego.</p>
+    <div class="mech-grid">
+      <div class="mech-card">
+        <span class="big-num">1</span>
+        <span class="mech-icon">🚦</span>
+        <h3>Señales en Tiempo Real</h3>
+        <p>Responde a señales de tránsito mientras manejas. ¡Cada error cuesta puntos de licencia!</p>
+      </div>
+      <div class="mech-card">
+        <span class="big-num">2</span>
+        <span class="mech-icon">❓</span>
+        <h3>Trivia Vial</h3>
+        <p>En cada parada, responde preguntas sobre las leyes de tránsito de la República Dominicana.</p>
+      </div>
+      <div class="mech-card">
+        <span class="big-num">3</span>
+        <span class="mech-icon">🗺️</span>
+        <h3>Mapa Interactivo</h3>
+        <p>Desbloquea rutas reales del país: Autopista Duarte, La Romana, Samaná y más.</p>
+      </div>
+      <div class="mech-card">
+        <span class="big-num">4</span>
+        <span class="mech-icon">🏅</span>
+        <h3>Insignias y Logros</h3>
+        <p>Colecciona insignias de conductor ejemplar y comparte tus logros con amigos.</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-actions">
+    <button class="btn-prev" onclick="changeSlide(-1)">← Atrás</button>
+    <button class="btn-next" onclick="changeSlide(1)">Siguiente →</button>
+  </div>
+</section>
+
+<!-- ========= SLIDE 5 — CIERRE ========= -->
+<section class="slide" id="slide-5">
+  <span class="cta-emoji">🚗</span>
+  <h2 class="cta-title">¡Listo para Manejar<br>tu País!</h2>
+  <p class="cta-sub">Gamificación Vial convierte la educación vial en la aventura más emocionante de la RD.</p>
+  <div class="cta-stats">
+    <div class="stat-box">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Personajes</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Niveles</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">32</span>
+      <span class="stat-label">Provincias</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">∞</span>
+      <span class="stat-label">Diversión</span>
+    </div>
+  </div>
+  <p class="author-credits">Proyecto de Michell Benzant Lorenzo • 2026</p>
+  <div style="margin-top: 36px;">
+    <button class="btn-prev" onclick="changeSlide(-1)" style="background:rgba(255,255,255,0.2);color:#fff;border-color:rgba(255,255,255,0.4);">← Ver de nuevo</button>
+  </div>
+</section>
+
+<script>
+  const TOTAL = 6;
+  let current = 0;
+
+  // Build road lines
+  const rl = document.getElementById('road-lines');
+  if (rl) {
+    for (let i = 0; i < 20; i++) {
+      const d = document.createElement('div');
+      d.className = 'road-line';
+      rl.appendChild(d);
+    }
+  }
+
+  // Build nav dots
+  const nd = document.getElementById('nav-dots');
+  for (let i = 0; i < TOTAL; i++) {
+    const b = document.createElement('button');
+    b.className = 'dot' + (i === 0 ? ' active' : '');
+    b.setAttribute('aria-label', 'Ir a diapositiva ' + (i+1));
+    b.onclick = () => goTo(i);
+    nd.appendChild(b);
+  }
+
+  function goTo(n) {
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i === n));
+    document.getElementById('slide-' + n).classList.add('active');
+    document.getElementById('slide-counter').textContent =
+      String(n+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+    document.getElementById('progress-fill').style.width =
+      ((n+1)/TOTAL*100).toFixed(1) + '%';
+    current = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function changeSlide(dir) {
+    const next = Math.max(0, Math.min(TOTAL-1, current + dir));
+    goTo(next);
+  }
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+</script>
+</body>
+</html>
